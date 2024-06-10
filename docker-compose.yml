@@ -1,0 +1,9 @@
+version: "3"
+services:
+  server:
+    image: fahri12/preauctionui
+    ports:
+      - 8080:80
+    environment:
+      - API_BASE_URL=localhost:8081
+    restart: always
