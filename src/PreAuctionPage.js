@@ -4,10 +4,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 import './PreAuctionPage.css';
 
 function PreAuctionPage() {
-    const apiUrl = process.env.API_BASE_URL;
+    const apiUrl = "http://localhost:8081";
 
     const [auctionReadyTime, setAuctionReadyTime] = useState(new Date());
-    const [auctionStartTime, setAuctionStartTime] = useState(new Date());
     const [trayInfo, setTrayInfo] = useState({
       fishName: '',
       kilogram: 0,
@@ -20,7 +19,7 @@ function PreAuctionPage() {
     useEffect(() => {
       const fetchTrays = async () => {
         try {
-          const response = await fetch(`${apiUrl}//tray`);
+          const response = await fetch(`${apiUrl}/tray`);
           if (response.ok) {
             const data = await response.json();
             setTrays(data);
@@ -43,7 +42,6 @@ function PreAuctionPage() {
   const handleCreateAuction = async () => {
     const auctionData = {
       readyTime: auctionReadyTime.toISOString(),
-      startTime: auctionStartTime.toISOString()
     };
 
     try {
@@ -82,15 +80,15 @@ function PreAuctionPage() {
   const handleAddTray = async () => {
     const trayEntryTime = new Date().toISOString();
     const newTray = { ...trayInfo, trayEntryTime };
-
+  
     console.log(newTray)
-
+  
     const response = await fetch(`${apiUrl}/tray`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newTray),
     });
-
+  
     if (response.ok) {
         setTrayInfo({
             fishName: '',
@@ -100,10 +98,15 @@ function PreAuctionPage() {
         }); 
         setShowTrayForm(false); 
         alert('Tray added successfully!');
+  
+        // Reload the page after 2 seconds
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
     } else {
         alert('Failed to add tray');
     }
-  };
+  };  
 
   return (
     <div className="pre-auction-page">
@@ -114,15 +117,6 @@ function PreAuctionPage() {
           <DatePicker
             selected={auctionReadyTime}
             onChange={(date) => setAuctionReadyTime(date)}
-            showTimeSelect
-            dateFormat="Pp"
-          />
-        </div>
-        <div className="form-group">
-          <label>Auction Start Time</label>
-          <DatePicker
-            selected={auctionStartTime}
-            onChange={(date) => setAuctionStartTime(date)}
             showTimeSelect
             dateFormat="Pp"
           />
